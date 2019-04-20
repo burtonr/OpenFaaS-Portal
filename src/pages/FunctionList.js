@@ -20,17 +20,27 @@ const styles = theme => ({
     table: {
         minWidth: 700,
     },
+    paper: {
+        position: 'absolute',
+        width: theme.spacing.unit * 50,
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing.unit * 4,
+        outline: 'none',
+      },
 });
 
-const refreshListTimeout = 3500;
+const refreshListTimeout = 350000;
 
 function rand() {
     return Math.round(Math.random() * 20) - 10;
   } 
 
 function getModalStyle() {
-    const top = 50 + rand();
-    const left = 50 + rand();
+    // const top = 50 + rand();
+    // const left = 50 + rand();
+    const top = 50;
+    const left = 50;
   
     return {
       top: `${top}%`,
@@ -94,9 +104,9 @@ class FunctionTable extends React.Component {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell align="right">Image</TableCell>
-                                <TableCell align="right">URL</TableCell>
-                                <TableCell align="right">Process</TableCell>
+                                <TableCell align="left">Image</TableCell>
+                                <TableCell align="left">URL</TableCell>
+                                <TableCell align="left">Process</TableCell>
                                 <TableCell align="right">Replicas</TableCell>
                                 <TableCell align="right">Invocations</TableCell>
                             </TableRow>
@@ -108,8 +118,8 @@ class FunctionTable extends React.Component {
                                         {func.name}
                                     </TableCell>
                                     <TableCell align="right">{func.image}</TableCell>
-                                    <TableCell align="right">{this.state.baseUrl}function/{func.name}</TableCell>
-                                    <TableCell align="right">{func.envProcess}</TableCell>
+                                    <TableCell align="left">{this.state.baseUrl}function/{func.name}</TableCell>
+                                    <TableCell align="left">{func.envProcess}</TableCell>
                                     <TableCell align="right">{func.replicas}</TableCell>
                                     <TableCell align="right">{func.invocationCount}</TableCell>
                                 </TableRow>
@@ -124,10 +134,10 @@ class FunctionTable extends React.Component {
                 >
                     <div style={getModalStyle()} className={classes.paper}>
                         <Typography variant="h6" id="modal-title">
-                            this.state.selectedFunc.name
+                            {this.state.selectedFunc.name}
                     </Typography>
                         <Typography variant="subtitle1" id="simple-modal-description">
-                            this.state.selectedFunc.image
+                            {this.state.selectedFunc.image}
                     </Typography>
                     </div>
                 </Modal>
