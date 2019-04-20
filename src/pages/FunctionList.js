@@ -32,13 +32,7 @@ const styles = theme => ({
 
 const refreshListTimeout = 350000;
 
-function rand() {
-    return Math.round(Math.random() * 20) - 10;
-  } 
-
 function getModalStyle() {
-    // const top = 50 + rand();
-    // const left = 50 + rand();
     const top = 50;
     const left = 50;
   
@@ -71,7 +65,6 @@ class FunctionTable extends React.Component {
     pollFunctions = () => {
         let options = {
             method: "GET", 
-            // mode: "no-cors",
             credentials: 'include'
         };
 
