@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -22,6 +22,7 @@ import Divider from '@material-ui/core/Divider';
 import NoFunctions from "./NoFunctions";
 import { Avatar } from "@material-ui/core";
 import ofIcon from '../static/images/icon.png';
+import FunctionList from "./FunctionList";
 
 const drawerWidth = 240;
 
@@ -143,7 +144,7 @@ class AppRouter extends React.Component {
                                 <MenuIcon />
                             </IconButton>
                             <Typography
-                                component="h1"
+                                component={Link} to="/"
                                 variant="h6"
                                 color="inherit"
                                 noWrap
@@ -169,7 +170,7 @@ class AppRouter extends React.Component {
                         <Divider />
                         <List>
                             <div>
-                                <ListItem button>
+                                <ListItem button key="Functions" component={Link} to="/functions">
                                 <ListItemIcon>
                                     <FormatListBulleted />
                                 </ListItemIcon>
@@ -183,7 +184,6 @@ class AppRouter extends React.Component {
                                 </ListItem>
                                 <ListItem button>
                                 <ListItemIcon>
-                                    {/* <BarChartIcon /> */}
                                     <ShowChart />
                                 </ListItemIcon>
                                 <ListItemText primary="Metrics" />
@@ -194,6 +194,7 @@ class AppRouter extends React.Component {
                     <main className={classes.content}>
                         <div className={classes.appBarSpacer} />
                         <Route path="/" exact component={NoFunctions} />
+                        <Route path="/functions" exact component={FunctionList} />
                     </main>
                 </div>
             </Router>
