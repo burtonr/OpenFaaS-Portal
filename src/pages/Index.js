@@ -23,6 +23,7 @@ import NoFunctions from "./NoFunctions";
 import { Avatar } from "@material-ui/core";
 import ofIcon from '../static/images/icon.png';
 import FunctionList from "./FunctionList";
+import FunctionStore from "./FunctionStore";
 
 const drawerWidth = 240;
 
@@ -176,7 +177,7 @@ class AppRouter extends React.Component {
                                 </ListItemIcon>
                                 <ListItemText primary="Functions" />
                                 </ListItem>
-                                <ListItem button>
+                                <ListItem button key="Store" component={Link} to="/store">
                                 <ListItemIcon>
                                     <AddShoppingCart />
                                 </ListItemIcon>
@@ -195,6 +196,7 @@ class AppRouter extends React.Component {
                         <div className={classes.appBarSpacer} />
                         <Route path="/" exact component={NoFunctions} />
                         <Route path="/functions" exact component={FunctionList} />
+                        <Route path="/store" exact component={FunctionStore} />
                     </main>
                 </div>
             </Router>
