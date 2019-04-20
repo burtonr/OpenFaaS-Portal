@@ -145,7 +145,6 @@ class AppRouter extends React.Component {
                             </IconButton>
                             <Typography
                                 component={Link} to="/"
-                                // component="h1"
                                 variant="h6"
                                 color="inherit"
                                 noWrap
@@ -185,7 +184,6 @@ class AppRouter extends React.Component {
                                 </ListItem>
                                 <ListItem button>
                                 <ListItemIcon>
-                                    {/* <BarChartIcon /> */}
                                     <ShowChart />
                                 </ListItemIcon>
                                 <ListItemText primary="Metrics" />

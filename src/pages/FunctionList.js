@@ -22,19 +22,7 @@ const styles = theme => ({
     },
 });
 
-let id = 0;
-function createData(name, image, url, envProcess, replicas, invocationCount) {
-    id += 1;
-    return { id, name, image, url, envProcess, replicas, invocationCount };
-}
-
-const rows = [
-    createData('cows', 'alexellis2/ascii-cows-openfaas:0.1', 'http://127.0.0.1:8080/function/cows', 'node show_cows.js', 1, 14),
-    createData('figlet', 'functions/figlet:0.9.6', 'http://127.0.0.1:8080/function/figlet', '', 1, 3),
-    createData('hubstats', 'functions/hubstats:latest', 'http://127.0.0.1:8080/function/hubstats', '', 1, 1),
-    createData('inception', 'alexellis/inception:2019-02-17', 'http://127.0.0.1:8080/function/inception', 'python3 index.py', 1, 2),
-    createData('sentimentanalysis', 'functions/sentimentanalysis:latest', 'http://127.0.0.1:8080/function/sentimentanalysis', '', 4, 1),
-];
+const refreshListTimeout = 3500;
 
 function rand() {
     return Math.round(Math.random() * 20) - 10;
@@ -55,6 +43,8 @@ class FunctionTable extends React.Component {
     state = {
         open: false,
         selectedFunc: {},
+        functions: [],
+        baseUrl: "http://127.0.0.1:8080/"
     };
 
     functionClicked = (event, row) => {
@@ -66,6 +56,33 @@ class FunctionTable extends React.Component {
 
     handleClose = () => {
             this.setState({ open: false });
+    }
+
+    pollFunctions = () => {
+        let options = {
+            method: "GET", 
+            // mode: "no-cors",
+            credentials: 'include'
+        };
+
+        let self = this;
+
+        fetch('http://127.0.0.1:8080/system/functions', options)
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    self.setState({
+                        functions: response
+                    });
+                }
+            })
+    }
+
+    componentDidMount = () => {
+        setInterval(() => {
+            this.pollFunctions();    
+        }, refreshListTimeout);
+        this.pollFunctions();
     }
 
     render() {
@@ -85,16 +102,16 @@ class FunctionTable extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map(row => (
-                                <TableRow key={row.id} hover onClick={event => this.functionClicked(event, row)}>
+                            {this.state.functions.map(func => (
+                                <TableRow key={func.name} hover onClick={event => this.functionClicked(event, func)}>
                                     <TableCell component="th" scope="row">
-                                        {row.name}
+                                        {func.name}
                                     </TableCell>
-                                    <TableCell align="right">{row.image}</TableCell>
-                                    <TableCell align="right">{row.url}</TableCell>
-                                    <TableCell align="right">{row.envProcess}</TableCell>
-                                    <TableCell align="right">{row.replicas}</TableCell>
-                                    <TableCell align="right">{row.invocationCount}</TableCell>
+                                    <TableCell align="right">{func.image}</TableCell>
+                                    <TableCell align="right">{this.state.baseUrl}function/{func.name}</TableCell>
+                                    <TableCell align="right">{func.envProcess}</TableCell>
+                                    <TableCell align="right">{func.replicas}</TableCell>
+                                    <TableCell align="right">{func.invocationCount}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
