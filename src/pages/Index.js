@@ -5,6 +5,12 @@ import FunctionList from "./FunctionList";
 import FunctionStore from "./FunctionStore";
 import Layout from "../Presentational/Layout";
 
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import rootReducer from '../reducers/index.js'
+
+const store = createStore(rootReducer)
+
 const navItems = [
     {
         to: '/functions',
@@ -20,21 +26,9 @@ const navItems = [
     },
 ]
 class AppRouter extends React.Component {
-    state = {
-        open: true,
-    };
-
-    handleDrawerOpen = () => {
-        this.setState({ open: true });
-    };
-
-    handleDrawerClose = () => {
-        this.setState({ open: false });
-    };
-
     render() {
-        const { classes } = this.props;
         return (
+          <Provider store={store}>
             <Router>
                 <Layout navItems={navItems} >
                     <Route path="/" exact component={NoFunctions} />
@@ -42,6 +36,7 @@ class AppRouter extends React.Component {
                     <Route path="/store" exact component={FunctionStore} />
                 </Layout>
             </Router>
+          </Provider>
         );
     }
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import {connect} from 'react-redux'
 import { Grid, Typography, SnackbarContent } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -15,6 +16,8 @@ import green from '@material-ui/core/colors/green';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+// TODO: these should be moved into a global theme...
+// The component name is MuiThemeProvider IIRC (no internet while writing this)
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -187,4 +190,16 @@ FunctionStore.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(FunctionStore);
+const mapStateToProps = (state, ownProps) => ({
+    functionList: state.functions.list,
+    status: state.functions.status
+})
+  
+// TODO: pull in redux-thunk to use fetch...
+const mapDispatchToProps = { }
+  
+// TODO: split presentation and data...
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(withStyles(styles)(FunctionStore))
