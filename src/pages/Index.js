@@ -6,10 +6,13 @@ import FunctionStore from "./FunctionStore";
 import Layout from "../Presentational/Layout";
 
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import rootReducer from '../reducers/index.js'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk';
 
-const store = createStore(rootReducer)
+
+import rootReducer, {initialState} from '../reducers/index.js'
+
+const store = createStore(rootReducer, initialState, applyMiddleware(thunk))
 
 const navItems = [
     {

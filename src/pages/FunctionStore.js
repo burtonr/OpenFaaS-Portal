@@ -191,11 +191,11 @@ FunctionStore.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    functionList: state.functions.list,
-    status: state.functions.status
+    functionList: state.functionStore.list,
+    status: state.functionStore.status
 })
   
-// TODO: pull in redux-thunk to use fetch...
+// TODO: pull in redux-thunk to use fetch... https://medium.com/@stowball/a-dummys-guide-to-redux-and-thunk-in-react-d8904a7005d3
 const mapDispatchToProps = { }
   
 // TODO: split presentation and data...
