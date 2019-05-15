@@ -16,6 +16,8 @@ import green from '@material-ui/core/colors/green';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import {loadStore} from '../actions/functionStore'
+
 // TODO: these should be moved into a global theme...
 // The component name is MuiThemeProvider IIRC (no internet while writing this)
 const styles = theme => ({
@@ -55,8 +57,6 @@ const styles = theme => ({
     }
 });
 
-const storeUrl = 'https://raw.githubusercontent.com/openfaas/store/master/functions.json';
-
 class FunctionStore extends React.Component {
     state = {
         selectedFunc: {},
@@ -66,16 +66,7 @@ class FunctionStore extends React.Component {
     };
 
     getFunctionStore = () => {
-        let self = this;
-        fetch(storeUrl)
-            .then(res => res.json())
-            .then(response => {
-                if (response && response.functions) {
-                    self.setState({
-                        functions: response.functions
-                    });
-                }
-            })
+      this.props.loadFunctions()
     };
 
     handleClose = (event, reason) => {
@@ -125,11 +116,12 @@ class FunctionStore extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, functions } = this.props;
+
         return (
             <div className={classes.root}>
                 <Grid container spacing={24} justify="center">
-                    {this.state.functions.map(func => (
+                    {functions.map(func => (
                         <Grid item sm={12} md={6} lg={4} xl={3} key={func.title}>
                             <Card className={classes.functionCard}>
                                 <CardActionArea className={classes.functionCardBody}>
@@ -191,12 +183,13 @@ FunctionStore.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    functionList: state.functionStore.list,
+    functions: state.functionStore.list,
     status: state.functionStore.status
 })
   
-// TODO: pull in redux-thunk to use fetch... https://medium.com/@stowball/a-dummys-guide-to-redux-and-thunk-in-react-d8904a7005d3
-const mapDispatchToProps = { }
+const mapDispatchToProps = { 
+    loadFunctions: loadStore
+}
   
 // TODO: split presentation and data...
 export default connect(
