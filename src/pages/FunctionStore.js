@@ -16,7 +16,7 @@ import green from '@material-ui/core/colors/green';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import {loadStore} from '../actions/functionStore'
+import { loadStoreFunctions, deployStoreFunction } from '../actions/functionStore'
 
 // TODO: these should be moved into a global theme...
 // The component name is MuiThemeProvider IIRC (no internet while writing this)
@@ -59,14 +59,7 @@ const styles = theme => ({
 
 class FunctionStore extends React.Component {
     state = {
-        selectedFunc: {},
-        functions: [],
-        snackBar: false,
-        snackBarSuccess: true
-    };
-
-    getFunctionStore = () => {
-      this.props.loadFunctions()
+        selectedFunc: {}
     };
 
     handleClose = (event, reason) => {
@@ -75,48 +68,16 @@ class FunctionStore extends React.Component {
         }
 
         this.setState({ snackBar: false });
-    };
-
-    deployStoreFunction = (event, func) => {
-        let postData = {
-            image: func.images['x86_64'],
-            service: func.name
-        }
-
-        let options = {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify(postData)
-        };
-
-        let self = this;
-
-        fetch('http://127.0.0.1:8080/system/functions', options)
-            .then(res => res.text())
-            .then(response => {
-                console.log(response);
-                if (response === '') {
-                    self.setState({
-                        snackBar: true,
-                        snackBarSuccess: true,
-                        snackBarMessage: 'Function: ' + func.name + ' deployed'
-                    });
-                } else {
-                    self.setState({
-                        snackBar: true,
-                        snackBarSuccess: false,
-                        snackBarMessage: response
-                    });
-                }
-            })
     }
 
     componentDidMount() {
-        this.getFunctionStore();
+        this.props.loadStoreFunctions()
     }
 
     render() {
         const { classes, functions } = this.props;
+
+        console.log('PROPS:',this.props)
 
         return (
             <div className={classes.root}>
@@ -142,7 +103,7 @@ class FunctionStore extends React.Component {
                                     </CardContent>
                                 </CardActionArea>
                                 <CardActions className={classes.functionCardActions}>
-                                    <a href={func.repo_url} target="_blank">
+                                    <a href={func.repo_url} target="_blank" rel="noopener noreferrer">
                                         <Tooltip title="Source" placement="top" aria-label="source">
                                             <IconButton>
                                                 <CodeIcon />
@@ -150,7 +111,7 @@ class FunctionStore extends React.Component {
                                         </Tooltip>
                                     </a>
                                     <Tooltip title="Deploy" placement="top" aria-label="deploy">
-                                        <IconButton onClick={event => this.deployStoreFunction(event, func)}>
+                                        <IconButton onClick={event => this.props.deployStoreFunction(event, func)}>
                                             <PlaylistAddIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -164,13 +125,13 @@ class FunctionStore extends React.Component {
                         vertical: 'bottom',
                         horizontal: 'center',
                     }}
-                    open={this.state.snackBar}
+                    open={!!this.props.snackBarMessage}
                     autoHideDuration={3000}
                     onClose={this.handleClose}
                 >
                 <SnackbarContent 
-                    className={this.state.snackBarSuccess ? classes.snackSuccess : classes.snackError}
-                    message={this.state.snackBarMessage}
+                    className={this.props.snackBarSuccess ? classes.snackSuccess : classes.snackError}
+                    message={this.props.snackBarMessage}
                     />
                 </Snackbar>
             </div>
@@ -182,13 +143,17 @@ FunctionStore.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
+//TODO: snackbar should probably be top level to go with the new global state. 
+// Then a timer could cycle through a FIFO list of notifications every 30 seconds or so.
 const mapStateToProps = (state, ownProps) => ({
     functions: state.functionStore.list,
-    status: state.functionStore.status
+    snackBarMessage: state.functionStore.error || state.functionDeploy.error || state.functionDeploy.message,
+    snackBarSuccess: !state.functionStore.error && !state.functionDeploy.error,
 })
   
 const mapDispatchToProps = { 
-    loadFunctions: loadStore
+    loadStoreFunctions,
+    deployStoreFunction,
 }
   
 // TODO: split presentation and data...

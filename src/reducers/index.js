@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux'
 
-import functionStore from './functionStore'
+import {functionStoreReducer, functionDeployReducer} from './functionStore'
 
 
-export default combineReducers({functionStore})
+export default combineReducers({functionStore: functionStoreReducer, functionDeploy: functionDeployReducer})
 
 const emptyObject = {
   status: 'Initializing',
