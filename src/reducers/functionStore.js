@@ -10,6 +10,9 @@ export function functionStoreReducer (state = {}, action) {
   return state
 }
 
+
+// TODO: move this to a global status instead of deploy action. 
+// This current method will get hard to rationalize quickly
 export function functionDeployReducer (state = {}, action) {
 
   if(action.type ==='FUNCTION_DEPLOY' & action.status === 'SUCCESS' ) 

@@ -63,6 +63,7 @@ class FunctionStore extends React.Component {
     };
 
     handleClose = (event, reason) => {
+        console.log(event,reason)
         if (reason === 'clickaway') {
             return;
         }
@@ -75,50 +76,13 @@ class FunctionStore extends React.Component {
     }
 
     render() {
-        const { classes, functions } = this.props;
+        const { classes, functions } = this.props
 
-        console.log('PROPS:',this.props)
-
+        // todo
         return (
             <div className={classes.root}>
                 <Grid container spacing={24} justify="center">
-                    {functions.map(func => (
-                        <Grid item sm={12} md={6} lg={4} xl={3} key={func.title}>
-                            <Card className={classes.functionCard}>
-                                <CardActionArea className={classes.functionCardBody}>
-                                    <CardMedia
-                                        className={classes.icon}
-                                        component="img"
-                                        alt={func.title}
-                                        height="auto"
-                                        image={func.icon ? func.icon : ''}
-                                        src={func.icon ? '' : OFLogo}
-                                        title={func.title}
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            {func.title}
-                                        </Typography>
-                                        <Typography component="p">{func.description}</Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                                <CardActions className={classes.functionCardActions}>
-                                    <a href={func.repo_url} target="_blank" rel="noopener noreferrer">
-                                        <Tooltip title="Source" placement="top" aria-label="source">
-                                            <IconButton>
-                                                <CodeIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </a>
-                                    <Tooltip title="Deploy" placement="top" aria-label="deploy">
-                                        <IconButton onClick={event => this.props.deployStoreFunction(event, func)}>
-                                            <PlaylistAddIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </CardActions>
-                            </Card>
-                        </Grid>
-                    ))}
+                    {this.renderFunctionList(functions)}
                 </Grid>
                 <Snackbar
                     anchorOrigin={{
@@ -137,10 +101,58 @@ class FunctionStore extends React.Component {
             </div>
         );
     }
+
+    renderFunctionList(functionList) {
+        return functionList.map(this.renderFunctionCard.bind(this))
+    }
+
+    renderFunctionCard(func,idx) {
+        //TODO: again, global theme
+        const { classes } = this.props
+
+        return (
+            <Grid item sm={12} md={6} lg={4} xl={3} key={func.title} key={'functioncard-'+idx}>
+                <Card className={classes.functionCard}>
+                    <CardActionArea className={classes.functionCardBody}>
+                        <CardMedia
+                            className={classes.icon}
+                            component="img"
+                            alt={func.title}
+                            height="auto"
+                            image={func.icon ? func.icon : ''}
+                            src={func.icon ? '' : OFLogo}
+                            title={func.title}
+                        />
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                {func.title}
+                            </Typography>
+                            <Typography component="p">{func.description}</Typography>
+                        </CardContent>
+                    </CardActionArea>
+                    <CardActions className={classes.functionCardActions}>
+                        <a href={func.repo_url} target="_blank" rel="noopener noreferrer">
+                            <Tooltip title="Source" placement="top" aria-label="source">
+                                <IconButton>
+                                    <CodeIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </a>
+                        <Tooltip title="Deploy" placement="top" aria-label="deploy">
+                            <IconButton onClick={event => this.props.deployStoreFunction(event, func)}>
+                                <PlaylistAddIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </CardActions>
+                </Card>
+            </Grid>
+        )
+    }
 }
 
 FunctionStore.propTypes = {
     classes: PropTypes.object.isRequired,
+    functions: PropTypes.array.isRequired
 };
 
 //TODO: snackbar should probably be top level to go with the new global state. 

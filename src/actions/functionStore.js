@@ -4,9 +4,11 @@
 //TODO: proxy this through the API?
 const storeUrl = 'https://raw.githubusercontent.com/openfaas/store/master/functions.json';
 
+//TODO memoize? Does this need to be loaded every component load or just ever page load?
 export function loadStoreFunctions() {
   return dispatch => {
-    dispatch({type:'STORE_LOAD', status:'LOADING'})
+    dispatch({type:'STORE_LOAD', status:'PENDING'})
+
     fetch(storeUrl)
         .then(res => res.json())
         .then(response => {
