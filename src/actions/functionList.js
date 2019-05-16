@@ -13,11 +13,11 @@ export function loadFunctionList() {
         .then(res => res.json())
         .then(response => {
             if (response && response.functions) {
-                dispatch({type:'FUNCTION_LIST_LOAD', status:'SUCCESS', storeList: response.functions})
+              dispatch({type:'FUNCTION_LIST_LOAD', status:'SUCCESS', storeList: response.functions})
             }
         }).catch(error => {
           console.error(error)
-          dispatch({type:'FUNCTION_LIST_LOAD', status:'FAILED', error})
+          dispatch({type:'FUNCTION_LIST_LOAD', status:'FAILED', message: error.message})
         })
   }
 }

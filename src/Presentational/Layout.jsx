@@ -18,6 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { Avatar } from "@material-ui/core";
 import ofIcon from '../static/images/icon.png';
+import EventSnackBar from "../Containers/EventSnackBar";
 
 
 const drawerWidth = 240;
@@ -176,6 +177,7 @@ class Layout extends React.Component {
                 <div className={classes.appBarSpacer} />
                 {this.props.children}
             </main>
+            <EventSnackBar />
         </div>
       );
   }
@@ -184,7 +186,6 @@ class Layout extends React.Component {
   renderNavItem({to, text},idx) {
 
     //TODO: Do we need links that don't have `component={Link}` ?
-
 
     return (
       <ListItem button key={'link-'+idx} component={Link} to={to}>

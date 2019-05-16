@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from 'react-redux'
-import { Grid, Typography, SnackbarContent } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
@@ -11,7 +11,6 @@ import CodeIcon from '@material-ui/icons/Code';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import Tooltip from '@material-ui/core/Tooltip';
 import OFLogo from '../static/images/icon.png';
-import Snackbar from '@material-ui/core/Snackbar';
 import green from '@material-ui/core/colors/green';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -84,20 +83,6 @@ class FunctionStore extends React.Component {
                 <Grid container spacing={24} justify="center">
                     {this.renderFunctionList(functions)}
                 </Grid>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                    open={!!this.props.snackBarMessage}
-                    autoHideDuration={3000}
-                    onClose={this.handleClose}
-                >
-                <SnackbarContent 
-                    className={this.props.snackBarSuccess ? classes.snackSuccess : classes.snackError}
-                    message={this.props.snackBarMessage}
-                    />
-                </Snackbar>
             </div>
         );
     }
@@ -111,7 +96,7 @@ class FunctionStore extends React.Component {
         const { classes } = this.props
 
         return (
-            <Grid item sm={12} md={6} lg={4} xl={3} key={func.title} key={'functioncard-'+idx}>
+            <Grid item sm={12} md={6} lg={4} xl={3} key={func.title} >
                 <Card className={classes.functionCard}>
                     <CardActionArea className={classes.functionCardBody}>
                         <CardMedia
@@ -158,9 +143,7 @@ FunctionStore.propTypes = {
 //TODO: snackbar should probably be top level to go with the new global state. 
 // Then a timer could cycle through a FIFO list of notifications every 30 seconds or so.
 const mapStateToProps = (state, ownProps) => ({
-    functions: state.functionStore.list,
-    snackBarMessage: state.functionStore.error || state.functionDeploy.error || state.functionDeploy.message,
-    snackBarSuccess: !state.functionStore.error && !state.functionDeploy.error,
+    functions: state.functionStore.list
 })
   
 const mapDispatchToProps = { 

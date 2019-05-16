@@ -52,7 +52,8 @@ export function deployStoreFunction(event, func) {
             dispatch({
               type: 'FUNCTION_DEPLOY',
               status: 'SUCCESS',
-              functionName: func.name
+              functionName: func.name,
+              message: 'Function '+ func.name + ' deployed!'
             })
           } else {
             dispatch({

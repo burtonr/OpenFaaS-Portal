@@ -2,12 +2,14 @@ import { combineReducers } from 'redux'
 
 import {functionStoreReducer, functionDeployReducer} from './functionStore'
 import {functionListReducer} from './functionList'
+import {statusQueueReducer} from './status'
 
 
 export default combineReducers({
   functionStore: functionStoreReducer, 
   functionDeploy: functionDeployReducer,
-  functionList: functionListReducer
+  functionList: functionListReducer,
+  statusList:statusQueueReducer
 })
 
 const emptyObject = {
@@ -17,5 +19,6 @@ const emptyObject = {
 
 export const initialState = {
   functionStore: Object.assign({list:[{}]},emptyObject),
-  functionList: Object.assign({list:[]},emptyObject)
+  functionList: Object.assign({list:[]},emptyObject),
+  statusList: []
 }
