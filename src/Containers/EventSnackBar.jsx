@@ -80,6 +80,7 @@ class EventSnackBar extends React.Component {
         autoHideDuration={3000}
         onClose={this.handleClose.bind(this, idx)}
         key={'sb-'+idx}
+        style={{bottom: idx * 52}} // 48 for each plus 4 padding
       >
         <SnackbarContent 
           className={e.status === 'FAILED' ? classes.snackError : classes.snackSuccess}
