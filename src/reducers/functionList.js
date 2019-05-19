@@ -1,4 +1,3 @@
-// Should and action be on the list
 
 export function functionListReducer (state = {}, action) {
 

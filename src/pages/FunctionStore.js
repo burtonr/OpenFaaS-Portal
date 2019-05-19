@@ -96,7 +96,7 @@ class FunctionStore extends React.Component {
         const { classes } = this.props
 
         return (
-            <Grid item sm={12} md={6} lg={4} xl={3} key={func.title} >
+            <Grid item sm={12} md={6} lg={4} xl={3} key={'func-'+idx}>
                 <Card className={classes.functionCard}>
                     <CardActionArea className={classes.functionCardBody}>
                         <CardMedia

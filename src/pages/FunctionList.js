@@ -13,7 +13,7 @@ import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 
 
-import { loadFunctionList } from '../actions/functionList'
+import { startPollFunctions, stopPollFunctions } from '../actions/functionList'
 
 const styles = theme => ({
     root: {
@@ -33,8 +33,6 @@ const styles = theme => ({
         outline: 'none',
       },
 });
-
-const refreshListTimeout = 350000;
 
 function getModalStyle() {
     const top = 50;
@@ -70,12 +68,10 @@ class FunctionTable extends React.Component {
     }
 
     componentDidMount = () => {
-
-        // TODO: move polling into thunk as start/stop commands Shoudln't be in view layer
-        setInterval(() => {
-            this.pollFunctions.bind(this);    
-        }, refreshListTimeout);
-        this.pollFunctions();
+        this.props.startPollFunctions()
+    }
+    componentWillUnmount = () => {
+        this.props.stopPollFunctions()
     }
 
     render() {
@@ -110,7 +106,7 @@ class FunctionTable extends React.Component {
                         </TableBody>
                     </Table>
                 </Paper>
-                {// TODO: Abstract Modals into presentational container
+                {// TODO: Abstract Modals into presentational container?
                 }
                 <Modal
                     open={this.state.open}
@@ -139,7 +135,8 @@ const mapStateToProps = (state, ownProps) => ({
 })
   
 const mapDispatchToProps = { 
-    loadFunctionList,
+    startPollFunctions,
+    stopPollFunctions
 }
   
 // TODO: split presentation and data...
