@@ -1,13 +1,12 @@
 import { combineReducers } from 'redux'
 
-import {functionStoreReducer, functionDeployReducer} from './functionStore'
+import {functionStoreReducer} from './functionStore'
 import {functionListReducer} from './functionList'
 import {statusQueueReducer} from './status'
 
 
 export default combineReducers({
   functionStore: functionStoreReducer, 
-  functionDeploy: functionDeployReducer,
   functionList: functionListReducer,
   statusList:statusQueueReducer
 })
