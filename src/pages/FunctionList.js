@@ -13,7 +13,7 @@ import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 
 
-import { startPollFunctions, stopPollFunctions } from '../actions/functionList'
+import {startPollFunctions, stopPollFunctions } from '../actions/functionList'
 
 const styles = theme => ({
     root: {
@@ -63,9 +63,6 @@ class FunctionTable extends React.Component {
             this.setState({ open: false });
     }
 
-    pollFunctions = () => {
-        this.props.loadFunctionList()
-    }
 
     componentDidMount = () => {
         this.props.startPollFunctions()

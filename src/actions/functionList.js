@@ -1,8 +1,6 @@
-//TODO: I don't like the filename... to many files with the same name
-
 
 // TODO move into a class and export methods to hide state
-let refreshTime = 350000
+let refreshTime = 5*1000
 let interval = null
 
 let intervalCounter = 0
@@ -10,7 +8,6 @@ let intervalCounter = 0
 export function refreshFunctionList() {
   return dispatch => {
     dispatch({type:'FUNCTION_LIST_LOAD', status:'PENDING'})
-
     fetch('/system/functions',
     {
         method: "GET", 
@@ -18,8 +15,8 @@ export function refreshFunctionList() {
     })
         .then(res => res.json())
         .then(response => {
-            if (response && response.functions) {
-              dispatch({type:'FUNCTION_LIST_LOAD', status:'SUCCESS', storeList: response.functions})
+            if (response) {
+              dispatch({type:'FUNCTION_LIST_LOAD', status:'SUCCESS', functionList: response})
             }
         }).catch(error => {
           console.error(error)
@@ -33,13 +30,15 @@ export function refreshFunctionList() {
 // As is, the timer can't change if we add a way to change it for the user.
 export function startPollFunctions() {
   return dispatch => {
-    intervalCounter++
 
+    intervalCounter++
     if(interval) return
 
     interval = setInterval(() => {
-      dispatch(refreshFunctionList)
+      refreshFunctionList()(dispatch)
     }, refreshTime);
+    refreshFunctionList()(dispatch)
+
   }
 }
 

@@ -1,6 +1,3 @@
-//TODO: I don't like the filename... to many files with the same name
-
-
 //TODO: proxy this through the API?
 const storeUrl = 'https://raw.githubusercontent.com/openfaas/store/master/functions.json';
 
@@ -44,8 +41,7 @@ export function deployStoreFunction(event, func) {
         body: JSON.stringify(postData)
     };
 
-    //TODO: remove host part
-    fetch('http://127.0.0.1:8080/system/functions', options)
+    fetch('/system/functions', options)
       .then(res => res.text())
       .then(response => {
           if (response === '') {
