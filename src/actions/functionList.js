@@ -25,9 +25,6 @@ export function refreshFunctionList() {
   }
 }
 
-
-// TODO: Switch to timer to allow flexible timeouts?
-// As is, the timer can't change if we add a way to change it for the user.
 export function startPollFunctions() {
   return dispatch => {
 
