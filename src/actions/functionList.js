@@ -26,13 +26,22 @@ export function refreshFunctionList() {
 export function startPollFunctions() {
   return dispatch => {
 
-    if(interval) return
+    if (interval) return
 
     interval = setInterval(() => {
       refreshFunctionList()(dispatch)
     }, refreshTime);
     refreshFunctionList()(dispatch)
 
+  }
+}
+
+export function stopPollFunctions() {
+  return dispatch => {
+    if (!interval) return
+
+    clearInterval(interval)
+    interval == null
   }
 }
 
