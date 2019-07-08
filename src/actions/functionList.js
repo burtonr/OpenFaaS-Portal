@@ -41,7 +41,7 @@ export function stopPollFunctions() {
     if (!interval) return
 
     clearInterval(interval)
-    interval == null
+    interval = null
   }
 }
 
