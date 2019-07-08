@@ -6,15 +6,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import { Tabs, Tab } from "@material-ui/core";
-import NewFunctionStoreTab from "../Containers/NewFunctionStoreTab";
-import NewCustomFunctionTab from "../Containers/NewCustomFunctionTab";
 
 
 export default class NewFunctionForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      tab: props.startTab || 0
+      tab:0
     }
   }
 
@@ -37,18 +35,19 @@ export default class NewFunctionForm extends React.Component {
 
   renderTabContent() {
     console.log(this.state)
-    if(this.state.tab===0) 
+    if(this.state.tab==0) 
       return this.renderStore()
 
-    if(this.state.tab===1) 
+    if(this.state.tab==1) 
       return this.renderCustom()
   }
 
+  //MAybe break these out into seperate Components?
   renderStore() {
-    return <NewFunctionStoreTab {...this.props} />
+    return "Store"
   }
 
   renderCustom() {
-    return <NewCustomFunctionTab {...this.props} />
+    return 'Custom'
   }
 }
