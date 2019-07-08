@@ -3,8 +3,6 @@
 let refreshTime = 5*1000
 let interval = null
 
-let intervalCounter = 0
-
 export function refreshFunctionList() {
   return dispatch => {
     dispatch({type:'FUNCTION_LIST_LOAD', status:'PENDING'})
@@ -28,7 +26,6 @@ export function refreshFunctionList() {
 export function startPollFunctions() {
   return dispatch => {
 
-    intervalCounter++
     if(interval) return
 
     interval = setInterval(() => {
@@ -39,14 +36,3 @@ export function startPollFunctions() {
   }
 }
 
-
-// Do we need this and the counter? I added it because the pattern is simple enough. 
-export function stopPollFunctions() {
-  return () => {
-    intervalCounter--
-
-    if(intervalCounter) return
-
-    clearInterval(interval)
-  }
-}
