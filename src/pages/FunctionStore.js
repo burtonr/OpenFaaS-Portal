@@ -1,5 +1,6 @@
 import React from "react";
-import { Grid, Typography, SnackbarContent } from "@material-ui/core";
+import {connect} from 'react-redux'
+import { Grid, Typography } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
@@ -10,11 +11,14 @@ import CodeIcon from '@material-ui/icons/Code';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import Tooltip from '@material-ui/core/Tooltip';
 import OFLogo from '../static/images/icon.png';
-import Snackbar from '@material-ui/core/Snackbar';
 import green from '@material-ui/core/colors/green';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import { loadStoreFunctions, deployStoreFunction } from '../actions/functionStore'
+
+// TODO: these should be moved into a global theme...
+// The component name is MuiThemeProvider IIRC (no internet while writing this)
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -52,139 +56,103 @@ const styles = theme => ({
     }
 });
 
-const storeUrl = 'https://raw.githubusercontent.com/openfaas/store/master/functions.json';
-
 class FunctionStore extends React.Component {
     state = {
-        selectedFunc: {},
-        functions: [],
-        snackBar: false,
-        snackBarSuccess: true
-    };
-
-    getFunctionStore = () => {
-        let self = this;
-        fetch(storeUrl)
-            .then(res => res.json())
-            .then(response => {
-                if (response && response.functions) {
-                    self.setState({
-                        functions: response.functions
-                    });
-                }
-            })
+        selectedFunc: {}
     };
 
     handleClose = (event, reason) => {
+        console.log(event,reason)
         if (reason === 'clickaway') {
             return;
         }
 
         this.setState({ snackBar: false });
-    };
-
-    deployStoreFunction = (event, func) => {
-        let postData = {
-            image: func.images['x86_64'],
-            service: func.name
-        }
-
-        let options = {
-            method: "POST",
-            credentials: 'include',
-            body: JSON.stringify(postData)
-        };
-
-        let self = this;
-
-        fetch('http://127.0.0.1:8080/system/functions', options)
-            .then(res => res.text())
-            .then(response => {
-                console.log(response);
-                if (response === '') {
-                    self.setState({
-                        snackBar: true,
-                        snackBarSuccess: true,
-                        snackBarMessage: 'Function: ' + func.name + ' deployed'
-                    });
-                } else {
-                    self.setState({
-                        snackBar: true,
-                        snackBarSuccess: false,
-                        snackBarMessage: response
-                    });
-                }
-            })
     }
 
     componentDidMount() {
-        this.getFunctionStore();
+        this.props.loadStoreFunctions()
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, functions } = this.props
+
+        // todo
         return (
             <div className={classes.root}>
                 <Grid container spacing={24} justify="center">
-                    {this.state.functions.map(func => (
-                        <Grid item sm={12} md={6} lg={4} xl={3} key={func.title}>
-                            <Card className={classes.functionCard}>
-                                <CardActionArea className={classes.functionCardBody}>
-                                    <CardMedia
-                                        className={classes.icon}
-                                        component="img"
-                                        alt={func.title}
-                                        height="auto"
-                                        image={func.icon ? func.icon : ''}
-                                        src={func.icon ? '' : OFLogo}
-                                        title={func.title}
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            {func.title}
-                                        </Typography>
-                                        <Typography component="p">{func.description}</Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                                <CardActions className={classes.functionCardActions}>
-                                    <a href={func.repo_url} target="_blank">
-                                        <Tooltip title="Source" placement="top" aria-label="source">
-                                            <IconButton>
-                                                <CodeIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </a>
-                                    <Tooltip title="Deploy" placement="top" aria-label="deploy">
-                                        <IconButton onClick={event => this.deployStoreFunction(event, func)}>
-                                            <PlaylistAddIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </CardActions>
-                            </Card>
-                        </Grid>
-                    ))}
+                    {this.renderFunctionList(functions)}
                 </Grid>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                    open={this.state.snackBar}
-                    autoHideDuration={3000}
-                    onClose={this.handleClose}
-                >
-                <SnackbarContent 
-                    className={this.state.snackBarSuccess ? classes.snackSuccess : classes.snackError}
-                    message={this.state.snackBarMessage}
-                    />
-                </Snackbar>
             </div>
         );
+    }
+
+    renderFunctionList(functionList) {
+        return functionList.map(this.renderFunctionCard.bind(this))
+    }
+
+    renderFunctionCard(func,idx) {
+        //TODO: again, global theme
+        const { classes } = this.props
+
+        return (
+            <Grid item sm={12} md={6} lg={4} xl={3} key={'func-'+idx}>
+                <Card className={classes.functionCard}>
+                    <CardActionArea className={classes.functionCardBody}>
+                        <CardMedia
+                            className={classes.icon}
+                            component="img"
+                            alt={func.title}
+                            height="auto"
+                            image={func.icon ? func.icon : ''}
+                            src={func.icon ? '' : OFLogo}
+                            title={func.title}
+                        />
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                {func.title}
+                            </Typography>
+                            <Typography component="p">{func.description}</Typography>
+                        </CardContent>
+                    </CardActionArea>
+                    <CardActions className={classes.functionCardActions}>
+                        <a href={func.repo_url} target="_blank" rel="noopener noreferrer">
+                            <Tooltip title="Source" placement="top" aria-label="source">
+                                <IconButton>
+                                    <CodeIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </a>
+                        <Tooltip title="Deploy" placement="top" aria-label="deploy">
+                            <IconButton onClick={event => this.props.deployStoreFunction(event, func)}>
+                                <PlaylistAddIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </CardActions>
+                </Card>
+            </Grid>
+        )
     }
 }
 
 FunctionStore.propTypes = {
     classes: PropTypes.object.isRequired,
+    functions: PropTypes.array.isRequired
 };
 
-export default withStyles(styles)(FunctionStore);
+//TODO: snackbar should probably be top level to go with the new global state. 
+// Then a timer could cycle through a FIFO list of notifications every 30 seconds or so.
+const mapStateToProps = (state, ownProps) => ({
+    functions: state.functionStore.list
+})
+  
+const mapDispatchToProps = { 
+    loadStoreFunctions,
+    deployStoreFunction,
+}
+  
+// TODO: split presentation and data...
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(withStyles(styles)(FunctionStore))

@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -10,6 +11,9 @@ import Paper from '@material-ui/core/Paper';
 
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
+
+
+import {startPollFunctions, stopPollFunctions } from '../actions/functionList'
 
 const styles = theme => ({
     root: {
@@ -30,8 +34,6 @@ const styles = theme => ({
       },
 });
 
-const refreshListTimeout = 350000;
-
 function getModalStyle() {
     const top = 50;
     const left = 50;
@@ -47,8 +49,7 @@ class FunctionTable extends React.Component {
     state = {
         open: false,
         selectedFunc: {},
-        functions: [],
-        baseUrl: "http://127.0.0.1:8080/"
+        functions: []
     };
 
     functionClicked = (event, row) => {
@@ -62,30 +63,12 @@ class FunctionTable extends React.Component {
             this.setState({ open: false });
     }
 
-    pollFunctions = () => {
-        let options = {
-            method: "GET", 
-            credentials: 'include'
-        };
-
-        let self = this;
-
-        fetch('http://127.0.0.1:8080/system/functions', options)
-            .then(res => res.json())
-            .then(response => {
-                if (response) {
-                    self.setState({
-                        functions: response
-                    });
-                }
-            })
-    }
 
     componentDidMount = () => {
-        setInterval(() => {
-            this.pollFunctions();    
-        }, refreshListTimeout);
-        this.pollFunctions();
+        this.props.startPollFunctions()
+    }
+    componentWillUnmount = () => {
+        this.props.stopPollFunctions()
     }
 
     render() {
@@ -105,7 +88,7 @@ class FunctionTable extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.functions.map(func => (
+                            {this.props.functions.map(func => (
                                 <TableRow key={func.name} hover onClick={event => this.functionClicked(event, func)}>
                                     <TableCell component="th" scope="row">
                                         {func.name}
@@ -120,7 +103,8 @@ class FunctionTable extends React.Component {
                         </TableBody>
                     </Table>
                 </Paper>
-
+                {// TODO: Abstract Modals into presentational container?
+                }
                 <Modal
                     open={this.state.open}
                     onClose={this.handleClose}
@@ -140,7 +124,20 @@ class FunctionTable extends React.Component {
 }
 
 FunctionTable.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(FunctionTable);
+const mapStateToProps = (state, ownProps) => ({
+    functions: state.functionList.list
+})
+  
+const mapDispatchToProps = { 
+    startPollFunctions,
+    stopPollFunctions
+}
+  
+// TODO: split presentation and data...
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(withStyles(styles)(FunctionTable))
